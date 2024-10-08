@@ -6,9 +6,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends tini
 
+RUN pwd
+
+
 WORKDIR /app
 
 VOLUME ["/app"]
+RUN chgrp -R 0 /app && chmod -R g=u /app
 ENTRYPOINT ["/usr/bin/tini", "-v", "--"]
-COPY docker-entrypoint.sh /
-CMD /docker-entrypoint.sh
+COPY docker-entrypoint.sh /app
+CMD /app/docker-entrypoint.sh

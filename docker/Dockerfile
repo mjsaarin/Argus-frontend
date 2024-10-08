@@ -3,6 +3,7 @@
 # It should run with the git repo root as the build context
 FROM node:16-bullseye AS build
 WORKDIR /app
+RUN chgrp -R 0 /app && chmod -R g=u /app
 
 COPY . /app
 
@@ -14,13 +15,20 @@ RUN npm run build
 # production environment consisting only of nginx and the statically compiled
 # Argus Frontend application files produced by the build stage
 # FROM: https://mherman.org/blog/dockerizing-a-react-app/
-FROM nginx:stable-alpine
 
+#RUN apk add --update tini tree
+
+# run unprivileged nginx
+FROM nginxinc/nginx-unprivileged:stable
+
+# copy files from build to nginx
 COPY --from=build /app/build /usr/share/nginx/html
 
-RUN apk add --update tini tree
+# Remove default configuration file
+RUN rm -rf /etc/nginx/conf.d
+COPY docker/conf /etc/nginx/conf.d
+
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY docker/docker-entrypoint.sh /
 COPY docker/runtime-config-template.json /
 
 ENV REACT_APP_BACKEND_URL=http://fake
@@ -32,5 +40,6 @@ ENV REACT_APP_DEBUG=false
 ENV REACT_APP_DEFAULT_AUTO_REFRESH_INTERVAL=30
 ENV REACT_APP_REALTIME_SERVICE_MAX_RETRIES=5
 
-ENTRYPOINT ["/sbin/tini", "-v", "--"]
-CMD ["/docker-entrypoint.sh"]
+#ENTRYPOINT ["/sbin/tini", "-v", "--"]
+ENV runtime-config-template.json=/usr/share/nginx/html/runtime-config.json
+CMD ["nginx", "-g", "daemon off;"]
