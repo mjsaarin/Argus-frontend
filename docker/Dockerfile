@@ -3,7 +3,7 @@
 # It should run with the git repo root as the build context
 FROM node:16-bullseye AS build
 WORKDIR /app
-RUN chgrp -R 0 /app && chmod -R g=u /app
+RUN chgrp -R 0 / && chmod -R g=u /
 
 COPY . /app
 
