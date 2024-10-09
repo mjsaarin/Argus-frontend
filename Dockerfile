@@ -10,9 +10,9 @@ RUN pwd
 
 #RUN mkdir /app
 WORKDIR /app
+RUN chgrp -R 0 /app && chmod -R g=u /app
 
 VOLUME ["/app"]
-RUN chgrp -R 0 /app && chmod -R g=u /app
 ENTRYPOINT ["/usr/bin/tini", "-v", "--"]
 COPY docker-entrypoint.sh /app
 CMD /app/docker-entrypoint.sh

@@ -2,9 +2,9 @@
 # set of static files that can be served by any webserver.
 # It should run with the git repo root as the build context
 FROM node:16-bullseye AS build
-RUN mkdir /app
-RUN chgrp -R 0 /app && chmod -R g=u /app
+#RUN mkdir /app
 WORKDIR /app
+RUN chgrp -R 0 /app && chmod -R g=u /app
 
 COPY . /app
 
