@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends tini
 
 RUN pwd
 
-RUN mkdir /app
+#RUN mkdir /app
 WORKDIR /app
 
 VOLUME ["/app"]
